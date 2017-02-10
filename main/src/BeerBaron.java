@@ -1,5 +1,3 @@
-import com.sun.xml.internal.bind.api.impl.NameConverter;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -9,6 +7,9 @@ import java.nio.file.Paths;
 
 public class BeerBaron {
     public static void main(String[] args) {
+        SQLiteInitializer sqLiteInitializer = new SQLiteInitializer();
+        sqLiteInitializer.createTables();
+
         Path filePath = Paths.get("products.txt");
 
         try(BufferedReader br = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {

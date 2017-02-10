@@ -1,5 +1,6 @@
 #project specific
 products.txt
+beerbaron.db
 
 *.class
 
