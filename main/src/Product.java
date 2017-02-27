@@ -19,4 +19,10 @@ public class Product {
     public String getAvgPrice() {
         return avgPrice;
     }
+
+    public String toString() {
+        return "Product id: " + id + "\n" +
+               "Product name: " + name + "\n" +
+               "Produce price: " + avgPrice;
+    }
 }
