@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -23,7 +29,7 @@ public class SQLiteInitializer {
     // queries for table creation
     private static final String DATABASE_CREATE_PRODUCT = "CREATE TABLE IF NOT EXISTS " +
             TABLE_PRODUCT + "(" +
-                PRODUCT_COLUMN_ID + " TEXT NOT NULL, " +
+                PRODUCT_COLUMN_ID + " INTEGER NOT NULL, " +
                 PRODUCT_COLUMN_NAME + " TEXT, " +
                 PRODUCT_COLUMN_AVGPRICE + " REAL, " +
             "CONSTRAINT Product_p_id_pk PRIMARY KEY (" + PRODUCT_COLUMN_ID + "));";
@@ -47,6 +53,31 @@ public class SQLiteInitializer {
             statement.close();
 
             connection.close();
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addDefaultProducts() {
+        Path filePath = Paths.get("products.txt");
+
+        try(BufferedReader br = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
+            Statement statement = connection.createStatement();
+            String line = null;
+
+            while((line = br.readLine()) != null) {
+                String sql = "INSERT INTO Product (p_name) VALUES ('" + line + "');";
+                System.out.println(sql);
+                statement.execute(sql);
+            }
+
+            statement.close();
+            connection.close();
+
+        } catch(IOException e) {
+            e.printStackTrace();
         } catch(SQLException e) {
             e.printStackTrace();
         }

@@ -9,8 +9,9 @@ public class BeerBaron {
     public static void main(String[] args) {
         SQLiteInitializer sqLiteInitializer = new SQLiteInitializer();
         sqLiteInitializer.createTables();
+        sqLiteInitializer.addDefaultProducts();
 
-        Path filePath = Paths.get("products.txt");
+        Path filePath = Paths.get("pricecheck.txt");
 
         try(BufferedReader br = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             String line = null;
