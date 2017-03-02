@@ -1,28 +1,28 @@
 public class Product {
-    private String id;
-    private String name;
-    private String avgPrice;
+    private String productId;
+    private String productName;
+    private String productAvgPrice;
 
     public Product(String id, String name) {
-        this.id = id;
-        this.name = name;
+        this.productId = id;
+        this.productName = name;
     }
 
-    public String getId() {
-        return id;
+    public String getProductId() {
+        return productId;
     }
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public String getAvgPrice() {
-        return avgPrice;
+    public String getProductAvgPrice() {
+        return productAvgPrice;
     }
 
     public String toString() {
-        return "Product id: " + id + "\n" +
-               "Product name: " + name + "\n" +
-               "Produce price: " + avgPrice;
+        return "productId: " + productId + "\n" +
+               "productName: " + productName + "\n" +
+               "productAvgPrice: " + productAvgPrice;
     }
 }
