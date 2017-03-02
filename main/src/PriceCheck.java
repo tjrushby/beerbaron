@@ -3,8 +3,13 @@ public class PriceCheck {
     private String priceCheckDateTime;
     private String priceCheckPrice;
 
-    public PriceCheck(String productId, String priceCheckPrice) {
+    public PriceCheck() {
+
+    }
+
+    public PriceCheck(String productId, String priceCheckDateTime, String priceCheckPrice) {
         this.productId = productId;
+        this.priceCheckDateTime = priceCheckDateTime;
         this.priceCheckPrice = priceCheckPrice;
     }
 
