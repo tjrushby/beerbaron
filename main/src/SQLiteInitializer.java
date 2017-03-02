@@ -29,7 +29,7 @@ public class SQLiteInitializer {
     // queries for table creation
     private static final String DATABASE_CREATE_PRODUCT = "CREATE TABLE IF NOT EXISTS " +
             TABLE_PRODUCT + "(" +
-                PRODUCT_COLUMN_ID + " INTEGER NOT NULL, " +
+                PRODUCT_COLUMN_ID + " TEXT NOT NULL, " +
                 PRODUCT_COLUMN_NAME + " TEXT, " +
                 PRODUCT_COLUMN_AVGPRICE + " REAL, " +
             "CONSTRAINT Product_p_id_pk PRIMARY KEY (" + PRODUCT_COLUMN_ID + "));";
@@ -68,8 +68,11 @@ public class SQLiteInitializer {
             String line = null;
 
             while((line = br.readLine()) != null) {
-                String sql = "INSERT INTO Product (p_name) VALUES ('" + line + "');";
-                System.out.println(sql);
+                String p_id = line;
+                String p_name = br.readLine();
+
+                String sql = "INSERT INTO Product (" + PRODUCT_COLUMN_ID + ", " + PRODUCT_COLUMN_NAME + ") " +
+                             "VALUES ('" + p_id + "', '" + p_name + "');";
                 statement.execute(sql);
             }
 
