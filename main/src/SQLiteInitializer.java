@@ -85,4 +85,22 @@ public class SQLiteInitializer {
             e.printStackTrace();
         }
     }
+
+    public void addPriceCheck(String productID, String productPrice) {
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
+            Statement statement = connection.createStatement();
+
+            String sql = "INSERT INTO " + TABLE_PRICECHECK + " (" + PRODUCT_COLUMN_ID + ", " +
+                         PRICECHECK_COLUMN_DATETIME + ", " + PRICECHECK_COLUMN_PRICE + ") " +
+                         "VALUES ('" + productID + "', strftime('%s', 'now'), '" + productPrice + "');";
+
+            statement.execute(sql);
+            statement.close();
+            connection.close();
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
