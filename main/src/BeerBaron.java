@@ -8,8 +8,6 @@ import java.nio.file.Paths;
 public class BeerBaron {
     public static void main(String[] args) {
         SQLiteInitializer sqLiteInitializer = new SQLiteInitializer();
-        sqLiteInitializer.createTables();
-        sqLiteInitializer.addDefaultProducts();
 
         Path filePath = Paths.get("pricecheck.txt");
 

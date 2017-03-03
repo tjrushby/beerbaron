@@ -43,6 +43,15 @@ public class SQLiteInitializer {
             "CONSTRAINT PriceCheck_p_id FOREIGN KEY (" + PRODUCT_COLUMN_ID +
             ") REFERENCES " + TABLE_PRODUCT + "(" + PRODUCT_COLUMN_ID + "));";
 
+    public SQLiteInitializer() {
+        // check if there is an existing database
+        if(!Files.exists(Paths.get(DATABASE_NAME))) {
+            // there isn't an existing database so we need to create the tables and add default products
+            createTables();
+            addDefaultProducts();
+        }
+    }
+
     public void createTables() {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
