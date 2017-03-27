@@ -2,6 +2,7 @@
 pricecheck.txt
 products.txt
 beerbaron.db
+beerbaron.db-journal
 
 *.class
 
