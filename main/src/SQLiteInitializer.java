@@ -27,35 +27,38 @@ public class SQLiteInitializer {
     private static final String PRICECHECK_COLUMN_PRICE = "pc_price";
 
     // queries for table creation
-    private static final String DATABASE_CREATE_TABLE_PRODUCT = "CREATE TABLE IF NOT EXISTS " +
-            TABLE_PRODUCT + "(" +
-                PRODUCT_COLUMN_ID + " TEXT NOT NULL, " +
-                PRODUCT_COLUMN_NAME + " TEXT, " +
-                PRODUCT_COLUMN_AVGPRICE + " REAL, " +
-            "CONSTRAINT Product_p_id_pk PRIMARY KEY (" + PRODUCT_COLUMN_ID + "));";
+    private static final String DATABASE_CREATE_TABLE_PRODUCT = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_PRODUCT + "("
+                + PRODUCT_COLUMN_ID         + " TEXT NOT NULL, "
+                + PRODUCT_COLUMN_NAME       + " TEXT, "
+                + PRODUCT_COLUMN_AVGPRICE   + " REAL, "
+                + "CONSTRAINT Product_p_id_pk PRIMARY KEY (" + PRODUCT_COLUMN_ID + ")"
+            + ");";
 
-    private static final String DATABASE_CREATE_TABLE_PRICECHECK = "CREATE TABLE IF NOT EXISTS " +
-            TABLE_PRICECHECK + "(" +
-                PRODUCT_COLUMN_ID + " TEXT NOT NULL, " +
-                PRICECHECK_COLUMN_DATETIME + " INTEGER NOT NULL, " +
-                PRICECHECK_COLUMN_PRICE  + " REAL, " +
-            "CONSTRAINT PriceCheck_p_pc_id_pk PRIMARY KEY (" + PRODUCT_COLUMN_ID + ", " + PRICECHECK_COLUMN_DATETIME + "), " +
-            "CONSTRAINT PriceCheck_p_id FOREIGN KEY (" + PRODUCT_COLUMN_ID +
-            ") REFERENCES " + TABLE_PRODUCT + "(" + PRODUCT_COLUMN_ID + "));";
+    private static final String DATABASE_CREATE_TABLE_PRICECHECK = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_PRICECHECK + "("
+                + PRODUCT_COLUMN_ID             + " TEXT NOT NULL, "
+                + PRICECHECK_COLUMN_DATETIME    + " INTEGER NOT NULL, "
+                + PRICECHECK_COLUMN_PRICE       + " REAL, "
+                + "CONSTRAINT PriceCheck_p_pc_id_pk PRIMARY KEY ("
+                    + PRODUCT_COLUMN_ID + ", " + PRICECHECK_COLUMN_DATETIME
+                + "), CONSTRAINT PriceCheck_p_id FOREIGN KEY ("
+                    + PRODUCT_COLUMN_ID + ") REFERENCES " + TABLE_PRODUCT + "(" + PRODUCT_COLUMN_ID + ")"
+            + ");";
 
     // queries for trigger creation
     private static final String DATABASE_CREATE_TRIGGER_AVGPRICE =
-            "CREATE TRIGGER 'update_product_avgprice' " +
-                "AFTER INSERT ON '" + TABLE_PRICECHECK + "' " +
-                "FOR EACH ROW " +
-            "BEGIN " +
-                "UPDATE '" + TABLE_PRODUCT + "' " +
-                "SET " + PRODUCT_COLUMN_AVGPRICE + " = (" +
-                    "SELECT AVG(" + TABLE_PRICECHECK + "." + PRICECHECK_COLUMN_PRICE + ") " +
-                    "FROM '" + TABLE_PRICECHECK + "' " +
-                    "WHERE " + TABLE_PRICECHECK + "." + PRODUCT_COLUMN_ID + " = " + TABLE_PRODUCT + "." + PRODUCT_COLUMN_ID + " " +
-                ");" +
-            "END;";
+            "CREATE TRIGGER 'update_product_avgprice' "
+                + "AFTER INSERT ON '" + TABLE_PRICECHECK + "' "
+                + "FOR EACH ROW "
+            + "BEGIN "
+                + "UPDATE '" + TABLE_PRODUCT + "' "
+                + "SET " + PRODUCT_COLUMN_AVGPRICE + " = ("
+                    + "SELECT AVG(" + TABLE_PRICECHECK + "." + PRICECHECK_COLUMN_PRICE + ") "
+                    + "FROM '" + TABLE_PRICECHECK + "' "
+                    + "WHERE " + TABLE_PRICECHECK + "." + PRODUCT_COLUMN_ID + " = " + TABLE_PRODUCT + "." + PRODUCT_COLUMN_ID + " "
+                + ");"
+            + "END;";
 
     public SQLiteInitializer() {
         // check if there is an existing database
@@ -84,6 +87,7 @@ public class SQLiteInitializer {
         }
     }
 
+    // adds the list of default products to the database from file
     public void addDefaultProducts() {
         Path filePath = Paths.get("products.txt");
 
@@ -111,14 +115,17 @@ public class SQLiteInitializer {
         }
     }
 
+    // adds a new row to the PriceCheck table using data parsed with JSoup
     public void addPriceCheck(String productID, String productPrice) {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
             Statement statement = connection.createStatement();
 
-            String sql = "INSERT INTO " + TABLE_PRICECHECK + " (" + PRODUCT_COLUMN_ID + ", " +
-                         PRICECHECK_COLUMN_DATETIME + ", " + PRICECHECK_COLUMN_PRICE + ") " +
-                         "VALUES ('" + productID + "', strftime('%s', 'now'), '" + productPrice + "');";
+            String sql = "INSERT INTO " + TABLE_PRICECHECK + " ("
+                            + PRODUCT_COLUMN_ID + ", " + PRICECHECK_COLUMN_DATETIME + ", " + PRICECHECK_COLUMN_PRICE
+                        + ") " + "VALUES ('"
+                            + productID + "', strftime('%s', 'now'), '" + productPrice + "'"
+                        + ");";
 
             statement.execute(sql);
             statement.close();
