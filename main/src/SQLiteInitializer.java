@@ -11,6 +11,7 @@ import java.sql.Statement;
 
 public class SQLiteInitializer {
     Connection connection;
+    Statement statement;
 
     private static final String DATABASE_NAME = "beerbaron.db";
     private static final int DATABASE_VERSION = 1;
@@ -60,6 +61,24 @@ public class SQLiteInitializer {
                 + ");"
             + "END;";
 
+    // method to close connections
+    private void closeConnection(Connection connection) {
+        try {
+            connection.close();
+        } catch(Exception e) {
+            // do nothing because if connection is null then it has been closed
+        }
+    }
+
+    //  method to close statements
+    private void closeStatement(Statement statement) {
+        try {
+            statement.close();
+        } catch(Exception e) {
+            // do nothing because if statement is null then it has been closed
+        }
+    }
+
     // checks if there is an existing database
     public void checkForExistingDatabase() {
         if(!Files.exists(Paths.get(DATABASE_NAME))) {
@@ -70,25 +89,24 @@ public class SQLiteInitializer {
     }
 
     // creates the tables and triggers in the database
-    public void createDatabaseStructure() {
+    private void createDatabaseStructure() {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
-
             Statement statement = connection.createStatement();
+
             statement.execute(DATABASE_CREATE_TABLE_PRODUCT);
             statement.execute(DATABASE_CREATE_TABLE_PRICECHECK);
             statement.execute(DATABASE_CREATE_TRIGGER_AVGPRICE);
-            statement.close();
-
-            connection.close();
-
         } catch(SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeStatement(statement);
+            closeConnection(connection);
         }
     }
 
     // adds the list of default products to the database from file
-    public void addDefaultProducts() {
+    private void addDefaultProducts() {
         Path filePath = Paths.get("products.txt");
 
         try(BufferedReader br = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
@@ -105,13 +123,13 @@ public class SQLiteInitializer {
                 statement.execute(sql);
             }
 
-            statement.close();
-            connection.close();
-
         } catch(IOException e) {
             e.printStackTrace();
         } catch(SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeStatement(statement);
+            closeConnection(connection);
         }
     }
 
@@ -128,11 +146,12 @@ public class SQLiteInitializer {
                         + ");";
 
             statement.execute(sql);
-            statement.close();
-            connection.close();
 
         } catch(SQLException e) {
             e.printStackTrace();
+        } finally {
+            closeStatement(statement);
+            closeConnection(connection);
         }
     }
 }
