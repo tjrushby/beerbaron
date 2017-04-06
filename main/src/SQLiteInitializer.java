@@ -60,8 +60,8 @@ public class SQLiteInitializer {
                 + ");"
             + "END;";
 
-    public SQLiteInitializer() {
-        // check if there is an existing database
+    // checks if there is an existing database
+    public void checkForExistingDatabase() {
         if(!Files.exists(Paths.get(DATABASE_NAME))) {
             // there isn't an existing database so we need to create the tables, triggers and add default products
             createDatabaseStructure();
