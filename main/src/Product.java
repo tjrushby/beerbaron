@@ -1,11 +1,19 @@
+import java.math.BigDecimal;
+
 public class Product {
     private String productId;
     private String productName;
-    private String productAvgPrice;
+    private BigDecimal productAvgPrice;
 
-    public Product(String id, String name) {
-        this.productId = id;
-        this.productName = name;
+    public Product(String productId, String productName) {
+        this.productId = productId;
+        this.productName = productName;
+    }
+
+    public Product(String productId, String productName, BigDecimal productAvgPrice) {
+        this.productId = productId;
+        this.productName = productName;
+        this.productAvgPrice = productAvgPrice;
     }
 
     public String getProductId() {
@@ -16,7 +24,7 @@ public class Product {
         return productName;
     }
 
-    public String getProductAvgPrice() {
+    public BigDecimal getProductAvgPrice() {
         return productAvgPrice;
     }
 
