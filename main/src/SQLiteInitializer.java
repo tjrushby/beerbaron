@@ -1,13 +1,14 @@
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class SQLiteInitializer {
     Connection connection;
@@ -92,7 +93,7 @@ public class SQLiteInitializer {
     private void createDatabaseStructure() {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
 
             statement.execute(DATABASE_CREATE_TABLE_PRODUCT);
             statement.execute(DATABASE_CREATE_TABLE_PRICECHECK);
@@ -111,7 +112,7 @@ public class SQLiteInitializer {
 
         try(BufferedReader br = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
             String line = null;
 
             while((line = br.readLine()) != null) {
@@ -137,7 +138,7 @@ public class SQLiteInitializer {
     public void addPriceCheck(String productID, String productPrice) {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
 
             String sql = "INSERT INTO " + TABLE_PRICECHECK + " ("
                             + PRODUCT_COLUMN_ID + ", " + PRICECHECK_COLUMN_DATETIME + ", " + PRICECHECK_COLUMN_PRICE
@@ -153,5 +154,35 @@ public class SQLiteInitializer {
             closeStatement(statement);
             closeConnection(connection);
         }
+    }
+
+    // returns all the records in the Product table as an ObservableList of Product objects
+    public ObservableList<Product> getAllProducts() {
+        ObservableList<Product> products = FXCollections.observableArrayList();
+
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
+            Statement statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery("SELECT * FROM " + TABLE_PRODUCT);
+
+            // the query returned results so cycle through the ResultSet and create new Products
+            // adding them to the list to return
+            while(rs.next()) {
+                String productId = rs.getString(PRODUCT_COLUMN_ID);
+                String productName = rs.getString(PRODUCT_COLUMN_NAME);
+                BigDecimal productAvgPrice = rs.getBigDecimal(PRODUCT_COLUMN_AVGPRICE);
+
+                products.add(new Product(productId, productName, productAvgPrice));
+            }
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeStatement(statement);
+            closeConnection(connection);
+        }
+
+        return products;
     }
 }
