@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<HBox fx:id="hbox" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+<HBox fx:id="hbox" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" stylesheets="product-list-cell.css">
    <children>
       <Label fx:id="labelProductName" text="Label" />
       <Region HBox.hgrow="ALWAYS" />
