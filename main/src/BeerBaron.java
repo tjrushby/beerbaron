@@ -4,13 +4,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 public class BeerBaron extends Application {
     private static final String PROGRAM_TITLE = "Beer Baron";
     private static final String PROGRAM_VERSION = "0.3";
@@ -19,19 +12,7 @@ public class BeerBaron extends Application {
         SQLiteInitializer sqLiteInitializer = new SQLiteInitializer();
         sqLiteInitializer.checkForExistingDatabase();
 
-        Path filePath = Paths.get("pricecheck.txt");
-
-        try(BufferedReader br = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
-            String line = null;
-
-            while((line = br.readLine()) != null) {
-                ProductParser p = new ProductParser(line);
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
-        } finally {
-            launch(args);
-        }
+        launch(args);
     }
 
     @Override

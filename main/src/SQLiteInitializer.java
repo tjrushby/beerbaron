@@ -1,5 +1,8 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -93,9 +96,10 @@ public class SQLiteInitializer {
     // checks if there is an existing database
     public void checkForExistingDatabase() {
         if(!Files.exists(Paths.get(DATABASE_NAME))) {
-            // there isn't an existing database so we need to create the tables, triggers and add default products
-            createDatabaseStructure();
-            addDefaultProducts();
+            // there isn't an existing database
+            createDatabaseStructure();  // create the tables and triggers
+            addDefaultProducts();       // add default products to the database
+            addPriceCheck();            // perform an initial price check
         }
     }
 
@@ -145,22 +149,66 @@ public class SQLiteInitializer {
     }
 
     // adds a new row to the PriceCheck table using data parsed with JSoup
-    public void addPriceCheck(String productID, String productPrice) {
+    public void addPriceCheck() {
+        String productId = "";
+        String productPrice = "";
+        Statement innerStatement = null;
+
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
             statement = connection.createStatement();
 
-            String sql = "INSERT INTO " + TABLE_PRICECHECK + " ("
+            // get all the product id's from the Product table
+            resultSet = statement.executeQuery("SELECT " + PRODUCT_COLUMN_ID + " FROM " + TABLE_PRODUCT);
+
+            // cycle through the ResultSet of product id's and connect to them using JSoup
+            while (resultSet.next()) {
+                productId = resultSet.getString(PRODUCT_COLUMN_ID);
+                String url = "https://www.danmurphys.com.au/product/" + productId;
+
+                // attempt to connect to the url for this product
+                Document doc = Jsoup.connect(url).get();
+
+                // select the product price
+                Elements prices = doc.select(".prdtlewgt-priceval");
+
+                if (prices.size() > 0) {
+                    // the carton price will be in the first selection unless there is a four
+                    // or six-pack special on the page
+                    productPrice = prices.get(0).text();
+
+                    // remove the $ character so we can check if we parsed the carton price
+                    String[] priceSplit = productPrice.split("\\$");
+                    productPrice = priceSplit[1];
+
+                    // a carton is incredibly unlikely to be under the 'if value', and a four or six-pack is unlikely
+                    // to be over it so we can tell what we've parsed
+                    if (Double.parseDouble(productPrice) < 31) {
+                        // we didn't parse the carton price from the first selection so it will be in
+                        // the second selection
+                        priceSplit = prices.get(1).text().split("\\$|\\s");
+                        productPrice = priceSplit[1];
+                    }
+
+                    System.out.println(productId + ": " + productPrice);
+
+                    innerStatement = connection.createStatement();
+
+                    // add the parsed product price in to the PriceCheck table
+                    String sql = "INSERT INTO " + TABLE_PRICECHECK + " ("
                             + PRODUCT_COLUMN_ID + ", " + PRICECHECK_COLUMN_DATETIME + ", " + PRICECHECK_COLUMN_PRICE
-                        + ") " + "VALUES ('"
-                            + productID + "', strftime('%s', 'now'), '" + productPrice + "'"
-                        + ");";
+                            + ") " + "VALUES ('"
+                            + productId + "', strftime('%s', 'now'), '" + productPrice + "'"
+                            + ");";
 
-            statement.execute(sql);
-
-        } catch(SQLException e) {
+                    innerStatement.execute(sql);
+                }
+            }
+        } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            closeResultSet(resultSet);
+            closeStatement(innerStatement);
             closeStatement(statement);
             closeConnection(connection);
         }
