@@ -25,6 +25,7 @@ public class SQLiteInitializer {
     private static final String TABLE_PRODUCT = "Product";
     private static final String PRODUCT_COLUMN_ID = "p_id";
     private static final String PRODUCT_COLUMN_NAME = "p_name";
+    private static final String PRODUCT_COLUMN_CURRENTPRICE = "p_currentprice";
     private static final String PRODUCT_COLUMN_AVGPRICE = "p_avgprice";
 
     // schema details for PriceCheck table
@@ -35,9 +36,10 @@ public class SQLiteInitializer {
     // queries for table creation
     private static final String DATABASE_CREATE_TABLE_PRODUCT = "CREATE TABLE IF NOT EXISTS "
             + TABLE_PRODUCT + "("
-                + PRODUCT_COLUMN_ID         + " TEXT NOT NULL, "
-                + PRODUCT_COLUMN_NAME       + " TEXT, "
-                + PRODUCT_COLUMN_AVGPRICE   + " REAL, "
+                + PRODUCT_COLUMN_ID             + " TEXT NOT NULL, "
+                + PRODUCT_COLUMN_NAME           + " TEXT, "
+                + PRODUCT_COLUMN_CURRENTPRICE   + " REAL, "
+                + PRODUCT_COLUMN_AVGPRICE       + " REAL, "
                 + "CONSTRAINT Product_p_id_pk PRIMARY KEY (" + PRODUCT_COLUMN_ID + ")"
             + ");";
 
@@ -190,8 +192,6 @@ public class SQLiteInitializer {
                         productPrice = priceSplit[1];
                     }
 
-                    System.out.println(productId + ": " + productPrice);
-
                     innerStatement = connection.createStatement();
 
                     // add the parsed product price in to the PriceCheck table
@@ -200,6 +200,14 @@ public class SQLiteInitializer {
                             + ") " + "VALUES ('"
                             + productId + "', strftime('%s', 'now'), '" + productPrice + "'"
                             + ");";
+
+                    innerStatement.execute(sql);
+
+                    // update p_currentprice in the Product table with this price now whilst  we have most of the data
+                    // we need instead of as a trigger which would require more queries to the database
+                    sql = "UPDATE " + TABLE_PRODUCT
+                            + " SET " + PRODUCT_COLUMN_CURRENTPRICE + " = '" + productPrice + "' "
+                            + " WHERE " + PRODUCT_COLUMN_ID + " = " + "'" + productId + "'";
 
                     innerStatement.execute(sql);
                 }
@@ -229,9 +237,10 @@ public class SQLiteInitializer {
             while(resultSet.next()) {
                 String productId = resultSet.getString(PRODUCT_COLUMN_ID);
                 String productName = resultSet.getString(PRODUCT_COLUMN_NAME);
+                BigDecimal productCurrentPrice = resultSet.getBigDecimal((PRODUCT_COLUMN_CURRENTPRICE));
                 BigDecimal productAvgPrice = resultSet.getBigDecimal(PRODUCT_COLUMN_AVGPRICE);
 
-                products.add(new Product(productId, productName, productAvgPrice));
+                products.add(new Product(productId, productName, productCurrentPrice, productAvgPrice));
             }
 
         } catch(SQLException e) {
