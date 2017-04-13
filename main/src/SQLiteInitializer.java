@@ -62,9 +62,12 @@ public class SQLiteInitializer {
             + "BEGIN "
                 + "UPDATE '" + TABLE_PRODUCT + "' "
                 + "SET " + PRODUCT_COLUMN_AVGPRICE + " = ("
-                    + "SELECT AVG(" + TABLE_PRICECHECK + "." + PRICECHECK_COLUMN_PRICE + ") "
-                    + "FROM '" + TABLE_PRICECHECK + "' "
-                    + "WHERE " + TABLE_PRICECHECK + "." + PRODUCT_COLUMN_ID + " = " + TABLE_PRODUCT + "." + PRODUCT_COLUMN_ID + " "
+                    + "SELECT AVG(" + PRICECHECK_COLUMN_PRICE + ") "
+                    + "FROM ("
+                        + "SELECT DISTINCT " + TABLE_PRICECHECK + "." + PRICECHECK_COLUMN_PRICE + " "
+                        + "FROM " + TABLE_PRICECHECK + " "
+                        + "WHERE " + TABLE_PRICECHECK + "." + PRODUCT_COLUMN_ID + " = " + TABLE_PRODUCT + "." + PRODUCT_COLUMN_ID + " "
+                    + ")"
                 + ");"
             + "END;";
 
