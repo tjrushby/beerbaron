@@ -9,6 +9,7 @@ import java.io.IOException;
 public class ProductListCell extends ListCell<Product> {
     @FXML private HBox hbox;
     @FXML private Label labelProductName;
+    @FXML private Label labelProductCurrentPrice;
     @FXML private Label labelProductAvgPrice;
 
     private FXMLLoader fxmlLoader;
@@ -30,7 +31,7 @@ public class ProductListCell extends ListCell<Product> {
                 fxmlLoader.setController(this);
 
                 try {
-                    // actually load the layout hierarchy from the .fxml file we specified above
+                    // load the layout hierarchy from the .fxml file we specified above
                     fxmlLoader.load();
                 } catch(IOException e) {
                     e.printStackTrace();
@@ -39,7 +40,8 @@ public class ProductListCell extends ListCell<Product> {
 
             // set the text of the Label objects to the data we want to represent
             labelProductName.setText(product.getProductName());
-            labelProductAvgPrice.setText(product.getProductAvgPrice().toString());
+            labelProductCurrentPrice.setText("$" + product.getProductCurrentPrice().toString());
+            labelProductAvgPrice.setText("$" + product.getProductAvgPrice().toString());
 
             // draw the HBox containing our Label objects in this cell
             setGraphic(hbox);

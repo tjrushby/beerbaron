@@ -4,10 +4,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<HBox fx:id="hbox" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" stylesheets="product-list-cell.css">
+<HBox fx:id="hbox" stylesheets="product-list-cell.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="labelProductName" text="Label" />
       <Region HBox.hgrow="ALWAYS" />
+      <Label text="CUR_PRICE" />
+      <Label fx:id="labelProductCurrentPrice" text="Label" />
+      <Label text="AVG_PRICE" />
       <Label fx:id="labelProductAvgPrice" layoutX="10.0" layoutY="10.0" text="Label" />
    </children>
 </HBox>
