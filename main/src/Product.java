@@ -1,4 +1,5 @@
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Product {
     private String productId;
@@ -14,8 +15,8 @@ public class Product {
     public Product(String productId, String productName, BigDecimal productCurrentPrice, BigDecimal productAvgPrice) {
         this.productId = productId;
         this.productName = productName;
-        this.productCurrentPrice = productCurrentPrice;
-        this.productAvgPrice = productAvgPrice;
+        this.productCurrentPrice = productCurrentPrice.setScale(2, RoundingMode.CEILING);
+        this.productAvgPrice = productAvgPrice.setScale(2, RoundingMode.CEILING);
     }
 
     public String getProductId() {
