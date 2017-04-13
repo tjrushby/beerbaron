@@ -2,3 +2,11 @@
     -fx-font-size: 24px;
     -fx-padding: 10px;
 }
+
+.label-above-average {
+    -fx-text-fill: #FF0000;
+}
+
+.label-below-average {
+    -fx-text-fill: #00FF00;
+}

@@ -5,6 +5,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 public class ProductListCell extends ListCell<Product> {
     @FXML private HBox hbox;
@@ -40,8 +41,25 @@ public class ProductListCell extends ListCell<Product> {
 
             // set the text of the Label objects to the data we want to represent
             labelProductName.setText(product.getProductName());
-            labelProductCurrentPrice.setText("$" + product.getProductCurrentPrice().toString());
-            labelProductAvgPrice.setText("$" + product.getProductAvgPrice().toString());
+
+            BigDecimal productCurrentPrice = product.getProductCurrentPrice();
+            BigDecimal productAvgPrice = product.getProductAvgPrice();
+
+            labelProductCurrentPrice.setText("$" + productCurrentPrice);
+            labelProductAvgPrice.setText("$" + productAvgPrice);
+
+            // compare the current price with the average price so we know what colour to make the text
+            int higherOrLower = productCurrentPrice.compareTo(productAvgPrice);
+
+            if(higherOrLower < 0) {
+                // the current price is below the average price, set the appropriate css class
+                // for labelProductCurrentPrice
+                labelProductCurrentPrice.getStyleClass().add("label-below-average");
+            } else if(higherOrLower > 0) {
+                // the current price is above the average price, set the appropriate css class
+                // for labelProductCurrentPrice
+                labelProductCurrentPrice.getStyleClass().add("label-above-average");
+            }
 
             // draw the HBox containing our Label objects in this cell
             setGraphic(hbox);
