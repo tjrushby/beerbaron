@@ -9,8 +9,8 @@ public class BeerBaron extends Application {
     private static final String PROGRAM_VERSION = "0.3";
 
     public static void main(String[] args) {
-        SQLiteInitializer sqLiteInitializer = new SQLiteInitializer();
-        sqLiteInitializer.checkForExistingDatabase();
+        DatabaseHelper dbHelper = new DatabaseHelper();
+        dbHelper.setUpDatabase();
 
         launch(args);
     }

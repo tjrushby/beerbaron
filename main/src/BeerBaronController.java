@@ -9,21 +9,17 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BeerBaronController implements Initializable {
-    @FXML
-    private MenuBar menuBar;
+    @FXML private MenuBar menuBar;
+    @FXML private MenuItem menuItemCheckPrices;
 
-    @FXML
-    private MenuItem menuItemCheckPrices;
-
-    @FXML
-    private ListView<Product> listView;
+    @FXML private ListView<Product> listView;
 
     private ObservableList<Product> products;
-    private SQLiteInitializer sqLiteInitializer;
+    private DatabaseHelper dbHelper;
 
     public BeerBaronController() {
-        sqLiteInitializer = new SQLiteInitializer();
-        products = sqLiteInitializer.getAllProducts();
+        dbHelper = new DatabaseHelper();
+        products = dbHelper.getAllProducts();
     }
 
     @Override
@@ -38,10 +34,10 @@ public class BeerBaronController implements Initializable {
         // set the on action methods for the menu items
         menuItemCheckPrices.setOnAction(e -> {
             // perform a price check
-            sqLiteInitializer.addPriceCheck();
+            dbHelper.addPriceChecks();
 
             // update listView with the new prices from the price check
-            listView.setItems(sqLiteInitializer.getAllProducts());
+            listView.setItems(dbHelper.getAllProducts());
         });
     }
 }
