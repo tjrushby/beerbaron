@@ -32,7 +32,7 @@ public class ProductParser {
         if(metaElements.size() > 0) {
             // if we selected anything at all there will only be one element so we can safely assume that
             // it is the data we're after
-            productName = metaElements.get(0).text();
+            productName = metaElements.get(0).attr("content");
         }
 
         return productName;

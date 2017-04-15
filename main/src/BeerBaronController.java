@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 public class BeerBaronController implements Initializable {
     @FXML private MenuBar menuBar;
     @FXML private MenuItem menuItemCheckPrices;
+    @FXML private MenuItem menuItemAddNewProduct;
 
     @FXML private ListView<Product> listView;
 
@@ -38,6 +39,13 @@ public class BeerBaronController implements Initializable {
 
             // update listView with the new prices from the price check
             listView.setItems(dbHelper.getAllProducts());
+        });
+
+        menuItemAddNewProduct.setOnAction(e -> {
+            if(new ViewAddNewProduct().display()) {
+                // if this returned true then at least one product was added, so refresh the ListView
+                listView.setItems(dbHelper.getAllProducts());
+            }
         });
     }
 }

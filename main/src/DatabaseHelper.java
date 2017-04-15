@@ -99,16 +99,22 @@ public class DatabaseHelper {
     }
 
     // adds a new product to the Product table
-    public void addProduct(String productId, String productName) {
-        try(Connection connection = this.getConnection();
-            Statement statement = connection.createStatement()) {
+    public boolean addProduct(String productId, String productName) {
+        String sql = "INSERT INTO Product (" + PRODUCT_COLUMN_ID + ", " + PRODUCT_COLUMN_NAME + ") " +
+                     "VALUES (?, ?);";
 
-            String sql = "INSERT INTO Product (" + PRODUCT_COLUMN_ID + ", " + PRODUCT_COLUMN_NAME + ") " +
-                         "VALUES ('" + productId + "', '" + productName + "');";
-            statement.execute(sql);
+        try(Connection connection = this.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, productId);
+            statement.setString(2, productName);
+            statement.execute();
         } catch(SQLException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     // adds the list of default products to the database from file
@@ -137,7 +143,7 @@ public class DatabaseHelper {
     }
 
     // adds a new price check for the specified product
-    public void addPriceCheck(String productId, String productPrice) {
+    public boolean addPriceCheck(String productId, String productPrice) {
         try(Connection connection = this.getConnection();
             Statement statement = connection.createStatement()) {
 
@@ -149,7 +155,10 @@ public class DatabaseHelper {
             statement.execute(getSQLProductUpdateCurrentPrice(productId, productPrice));
         } catch(SQLException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     // adds a new price check for each product in the database
