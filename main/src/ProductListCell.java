@@ -1,14 +1,21 @@
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
+import java.awt.*;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
 
 public class ProductListCell extends ListCell<Product> {
     @FXML private HBox hbox;
+    @FXML private Button buttonWeb;
+    @FXML private Button buttonGraph;
     @FXML private Label labelProductName;
     @FXML private Label labelProductCurrentPrice;
     @FXML private Label labelProductAvgPrice;
@@ -39,6 +46,9 @@ public class ProductListCell extends ListCell<Product> {
                 }
             }
 
+            // add a css style class to the hbox containing everything
+            hbox.getStyleClass().add("hbox");
+
             // set the text of the Label objects to the data we want to represent
             labelProductName.setText(product.getProductName());
 
@@ -60,6 +70,25 @@ public class ProductListCell extends ListCell<Product> {
                 // for labelProductCurrentPrice
                 labelProductCurrentPrice.getStyleClass().add("label-above-average");
             }
+
+            // set up our buttons
+            Image iconWeb = new Image(getClass().getResourceAsStream("res/icon-web.png"));
+
+            buttonWeb.setGraphic(new ImageView(iconWeb));
+            buttonWeb.getStyleClass().add("res/icon-button");
+
+            buttonWeb.setOnAction(e -> {
+                try{
+                    Desktop.getDesktop().browse(new URI("https://www.danmurphys.com.au/product/" + product.getProductId()));
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            Image iconGraph = new Image(getClass().getResourceAsStream("res/icon-graph.png"));
+
+            buttonGraph.setGraphic(new ImageView(iconGraph));
+            buttonGraph.getStyleClass().add("icon-button");
 
             // draw the HBox containing our Label objects in this cell
             setGraphic(hbox);

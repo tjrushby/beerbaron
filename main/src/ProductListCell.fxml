@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<HBox fx:id="hbox" stylesheets="product-list-cell.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<HBox fx:id="hbox" alignment="CENTER_LEFT" stylesheets="product-list-cell.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="labelProductName" text="Label" />
+      <Label fx:id="labelProductName" text="Product Name" />
       <Region HBox.hgrow="ALWAYS" />
+      <Button fx:id="buttonWeb" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="icon-button" stylesheets="@product-list-cell.css" textAlignment="CENTER" HBox.hgrow="NEVER"></Button>
+      <Button fx:id="buttonGraph" mnemonicParsing="false" styleClass="icon-button" stylesheets="@product-list-cell.css"></Button>
       <Label text="CUR_PRICE" />
-      <Label fx:id="labelProductCurrentPrice" text="Label" />
+      <Label fx:id="labelProductCurrentPrice" text="Current Price" />
       <Label text="AVG_PRICE" />
-      <Label fx:id="labelProductAvgPrice" layoutX="10.0" layoutY="10.0" text="Label" />
+      <Label fx:id="labelProductAvgPrice" layoutX="10.0" layoutY="10.0" text="Average Price" />
    </children>
 </HBox>

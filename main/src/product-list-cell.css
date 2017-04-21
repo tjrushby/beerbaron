@@ -1,6 +1,9 @@
+.hbox {
+    -fx-spacing: 10px;
+}
+
 .label {
-    -fx-font-size: 24px;
-    -fx-padding: 10px;
+    -fx-font-size: 20px;
 }
 
 .label-above-average {
@@ -9,4 +12,8 @@
 
 .label-below-average {
     -fx-text-fill: #00FF00;
+}
+
+.icon-button {
+    -fx-padding: 5px;
 }
