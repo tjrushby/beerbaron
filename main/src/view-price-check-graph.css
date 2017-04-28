@@ -1,0 +1,7 @@
+.vbox {
+    -fx-padding: 10px;
+}
+
+.button-back {
+    -fx-graphic: url("res/icon-back.png");
+}

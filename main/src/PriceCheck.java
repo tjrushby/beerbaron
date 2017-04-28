@@ -1,40 +1,27 @@
+import java.math.BigDecimal;
+import java.sql.Date;
+
 public class PriceCheck {
     private String productId;
-    private String priceCheckDateTime;
-    private String priceCheckPrice;
+    private Date priceCheckDateTime;
+    private BigDecimal priceCheckPrice;
 
-    public PriceCheck() {
-
-    }
-
-    public PriceCheck(String productId, String priceCheckDateTime, String priceCheckPrice) {
+    public PriceCheck(String productId, Date priceCheckDateTime, BigDecimal priceCheckPrice) {
         this.productId = productId;
         this.priceCheckDateTime = priceCheckDateTime;
-        this.priceCheckPrice = priceCheckPrice;
+        this.priceCheckPrice = priceCheckPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     public String getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public String getPriceCheckDateTime() {
+    public Date getPriceCheckDateTime() {
         return priceCheckDateTime;
     }
 
-    public void setPriceCheckDateTime(String priceCheckDateTime) {
-        this.priceCheckDateTime = priceCheckDateTime;
-    }
-
-    public String getPriceCheckPrice() {
+    public BigDecimal getPriceCheckPrice() {
         return priceCheckPrice;
-    }
-
-    public void setPriceCheckPrice(String priceCheckPrice) {
-        this.priceCheckPrice = priceCheckPrice;
     }
 
     public String toString() {

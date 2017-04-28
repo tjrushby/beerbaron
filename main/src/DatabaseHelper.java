@@ -1,8 +1,5 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.sql.Date;
 
 public class DatabaseHelper {
 
@@ -190,6 +188,38 @@ public class DatabaseHelper {
         } catch(SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // returns all the records in the PriceCheck table for the given product id as an
+    // ObservableList of PriceCheck objects
+    public ObservableList<PriceCheck> getAllPriceChecksForProductId(String productId) {
+        ObservableList<PriceCheck> priceChecks = FXCollections.observableArrayList();
+
+        try(Connection connection = this.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT * FROM " + TABLE_PRICECHECK + " " +
+                        "WHERE " + PRODUCT_COLUMN_ID + " = '" + productId + "';")) {
+
+            // the query returned results so cycle through the ResultSet, create new Product
+            // objects and add them to the list to return
+            while(rs.next()) {
+                // convert the unix timestamp to a readable date
+                Long epoch = rs.getLong(PRICECHECK_COLUMN_DATETIME);
+                Date date = new Date(epoch * 1000);
+
+                BigDecimal priceCheckPrice = rs.getBigDecimal(PRICECHECK_COLUMN_PRICE);
+
+                // create a new PriceCheck object using the data from the ResultSet and add it to the
+                // list this method will return
+                PriceCheck priceCheck = new PriceCheck(productId, date, priceCheckPrice);
+                priceChecks.add(priceCheck);
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return priceChecks;
     }
 
     // returns all the records in the Product table as an ObservableList of Product objects

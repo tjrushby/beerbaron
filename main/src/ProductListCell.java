@@ -1,11 +1,11 @@
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.IOException;
@@ -71,12 +71,10 @@ public class ProductListCell extends ListCell<Product> {
                 labelProductCurrentPrice.getStyleClass().add("label-above-average");
             }
 
-            // set up our buttons
-            Image iconWeb = new Image(getClass().getResourceAsStream("res/icon-web.png"));
+            // styling for buttonWeb
+            buttonWeb.getStyleClass().addAll("button-icon", "button-web");
 
-            buttonWeb.setGraphic(new ImageView(iconWeb));
-            buttonWeb.getStyleClass().add("res/icon-button");
-
+            // open the product's url in the desktop browser
             buttonWeb.setOnAction(e -> {
                 try{
                     Desktop.getDesktop().browse(new URI("https://www.danmurphys.com.au/product/" + product.getProductId()));
@@ -85,12 +83,41 @@ public class ProductListCell extends ListCell<Product> {
                 }
             });
 
-            Image iconGraph = new Image(getClass().getResourceAsStream("res/icon-graph.png"));
+            // styling for buttonGraph
+            buttonGraph.getStyleClass().addAll("button-icon", "button-graph");
 
-            buttonGraph.setGraphic(new ImageView(iconGraph));
-            buttonGraph.getStyleClass().add("icon-button");
+            // change the scene to view the graph of PriceCheck data for this product
+            buttonGraph.setOnAction(e -> {
+                Scene thisScene = this.getScene();
+                Stage thisStage = (Stage) thisScene.getWindow();
 
-            // draw the HBox containing our Label objects in this cell
+                try {
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("ViewPriceCheckGraph.fxml"));
+
+                    // setControllerFactory so that when loader.load() is called it uses our constructor that allows
+                    // us to pass in the product the graph is for, along with the current stage and scene so we can
+                    // come back without accessing the database again for the list of products
+                    loader.setControllerFactory(controllerClass -> {
+                        if(controllerClass == ViewPriceCheckGraphController.class) {
+                            return new ViewPriceCheckGraphController(product, thisStage, thisScene);
+                        } else {
+                            try {
+                                return controllerClass.newInstance();
+                            } catch(Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                    });
+
+                    // update the Stage with the new Scene to display ViewPriceCheckGraph.fxml
+                    thisStage.setScene(new Scene(loader.load(), thisScene.getWidth(), thisScene.getHeight()));
+                } catch(IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            // draw the HBox containing our FXML objects in this cell
             setGraphic(hbox);
         }
     }

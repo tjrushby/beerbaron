@@ -2,6 +2,18 @@
     -fx-spacing: 10px;
 }
 
+.button-icon {
+    -fx-padding: 5px;
+}
+
+.button-graph {
+    -fx-graphic: url("res/icon-graph.png");
+}
+
+.button-web {
+    -fx-graphic: url("res/icon-web.png");
+}
+
 .label {
     -fx-font-size: 20px;
 }
@@ -12,8 +24,4 @@
 
 .label-below-average {
     -fx-text-fill: #00FF00;
-}
-
-.icon-button {
-    -fx-padding: 5px;
 }
