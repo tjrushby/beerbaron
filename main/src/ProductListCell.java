@@ -61,6 +61,9 @@ public class ProductListCell extends ListCell<Product> {
             // compare the current price with the average price so we know what colour to make the text
             int higherOrLower = productCurrentPrice.compareTo(productAvgPrice);
 
+            // remove any previous style classes added to the list cell to prevent the wrong style being applied
+            labelProductCurrentPrice.getStyleClass().removeAll("label-below-average", "label-above-average");
+
             if(higherOrLower < 0) {
                 // the current price is below the average price, set the appropriate css class
                 // for labelProductCurrentPrice

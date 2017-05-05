@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class DatabaseHelper {
 
@@ -222,13 +223,15 @@ public class DatabaseHelper {
         return priceChecks;
     }
 
-    // returns all the records in the Product table as an ObservableList of Product objects
-    public ObservableList<Product> getAllProducts() {
-        ObservableList<Product> products = FXCollections.observableArrayList();
+    // returns all the records in the Product table as an ArrayList of Product objects
+    public ArrayList<Product> getAllProducts() {
+        ArrayList<Product> products = new ArrayList<>();
 
         try(Connection connection = this.getConnection();
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM " + TABLE_PRODUCT)) {
+            ResultSet rs = statement.executeQuery(
+                    "SELECT * FROM " + TABLE_PRODUCT + " " +
+                        "ORDER BY " + PRODUCT_COLUMN_NAME + " ASC;")) {
 
             // the query returned results so cycle through the ResultSet, create new Product
             // objects and add them to the list to return
