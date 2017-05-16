@@ -50,6 +50,7 @@ public class DatabaseHelper {
                     PRODUCT_COLUMN_ID + ", " + PRICECHECK_COLUMN_DATETIME +
                 "), CONSTRAINT PriceCheck_p_id FOREIGN KEY (" +
                     PRODUCT_COLUMN_ID + ") REFERENCES " + TABLE_PRODUCT + "(" + PRODUCT_COLUMN_ID + ")" +
+                   " ON DELETE CASCADE" +
             ");";
 
     // queries for trigger creation
@@ -266,5 +267,26 @@ public class DatabaseHelper {
         return "UPDATE " + TABLE_PRODUCT +
                " SET " + PRODUCT_COLUMN_CURRENTPRICE + " = '" + productPrice + "' " +
                " WHERE " + PRODUCT_COLUMN_ID + " = " + "'" + productId + "'";
+    }
+
+    // deletes a product from the Product table and all corresponding rows in the PriceCheck table via cascade
+    public boolean removeProductById(String productId) {
+        try(Connection connection = this.getConnection();
+            Statement statement = connection.createStatement()) {
+
+            // enable foreign keys  for this connection so that the corresponding rows in the PriceCheck table are
+            // actually removed via cascade delete
+            statement.execute("PRAGMA foreign_keys = ON");
+
+            statement.execute(
+                    "DELETE FROM " + TABLE_PRODUCT + " " +
+                    "WHERE " + PRODUCT_COLUMN_ID + " = '" + productId + "';"
+            );
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }

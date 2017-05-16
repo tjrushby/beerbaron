@@ -11,6 +11,7 @@ public class BeerBaronController implements Initializable {
     @FXML private MenuBar menuBar;
     @FXML private MenuItem menuItemCheckPrices;
     @FXML private MenuItem menuItemAddNewProduct;
+    @FXML private MenuItem menuItemRemoveProduct;
 
     @FXML private TextField tfSearchProducts;
 
@@ -35,15 +36,20 @@ public class BeerBaronController implements Initializable {
             dbHelper.addPriceChecks();
 
             // update listView with the new prices from the price check
-            products = dbHelper.getAllProducts();
-            listView.setItems(FXCollections.observableArrayList(products));
+            updateListView();
         });
 
         menuItemAddNewProduct.setOnAction(e -> {
             if(new ViewAddNewProduct().display()) {
                 // if this returned true then at least one product was added, so refresh the ListView
-                products = dbHelper.getAllProducts();
-                listView.setItems(FXCollections.observableArrayList(products));
+                updateListView();
+            }
+        });
+
+        menuItemRemoveProduct.setOnAction(e -> {
+            if (new ViewRemoveProduct(products).display()) {
+                // if this returned true than at least one product was removed, so refresh the ListView
+                updateListView();
             }
         });
 
@@ -74,8 +80,13 @@ public class BeerBaronController implements Initializable {
         // tell the CellFactory to use ProductListCell instead of the default
         listView.setCellFactory(productListView -> new ProductListCell());
 
-        // retrieve a list of Product objects using data from the Products table and
-        // populate the ListView with it
+        // populate listView with the list of products
+        listView.setItems(FXCollections.observableArrayList(products));
+    }
+
+    // updates the list of products from the database and binds it to the ListView
+    private void updateListView() {
+        products = dbHelper.getAllProducts();
         listView.setItems(FXCollections.observableArrayList(products));
     }
 }
