@@ -36,6 +36,17 @@ public class ViewAddNewProductController implements Initializable {
         // set on action methods for the buttons
         buttonSearchProduct.setOnAction(e -> buttonSearchProductClicked());
         buttonAddProduct.setOnAction(e -> buttonAddProductClicked());
+
+        // disable buttonSearchProduct if tfProductId is empty
+        buttonSearchProduct.setDisable(true);
+
+        tfProductId.textProperty().addListener(((observable, oldValue, newValue) -> {
+            if(observable.getValue().equals("")) {
+                buttonSearchProduct.setDisable(true);
+            } else {
+                buttonSearchProduct.setDisable(false);
+            }
+        }));
     }
 
     // adds a new row to the Product table and PriceCheck table for the parsed product
