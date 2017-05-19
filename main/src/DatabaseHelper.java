@@ -162,7 +162,7 @@ public class DatabaseHelper {
     }
 
     // adds a new price check for each product in the database
-    public void addPriceChecks() {
+    public boolean addPriceChecks() {
         String productId = "";
         String productPrice = "";
         Statement innerStatement = null;
@@ -189,7 +189,10 @@ public class DatabaseHelper {
             }
         } catch(SQLException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     // returns all the records in the PriceCheck table for the given product id as an

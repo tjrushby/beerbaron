@@ -1,8 +1,10 @@
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import java.net.URL;
 import java.util.*;
@@ -32,11 +34,30 @@ public class BeerBaronController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // set the on action methods for the menu items
         menuItemCheckPrices.setOnAction(e -> {
-            // perform a price check
-            dbHelper.addPriceChecks();
+            ProgressBox progBox = new ProgressBox();
 
-            // update listView with the new prices from the price check
-            updateListView();
+            // display a progress box whilst a price check is performed
+            progBox.display("Fetching Prices");
+
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    // perform a price check
+                    dbHelper.addPriceChecks();
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    // hide the progress box now that call() is finished
+                    progBox.dismiss();
+
+                    // update listView with the new prices from the price check
+                    updateListView();
+                }
+            };
+
+            new Thread(task).start();
         });
 
         menuItemAddNewProduct.setOnAction(e -> {

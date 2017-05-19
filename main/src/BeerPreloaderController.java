@@ -14,7 +14,6 @@ public class BeerPreloaderController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // add a StyleClass to the VBox
         vBox.getStyleClass().add("vbox");
-        System.out.println(vBox.getStyleClass());
 
         // set progressBar to 'slide' infinitely
         progressBar.setProgress(-1.0f);
