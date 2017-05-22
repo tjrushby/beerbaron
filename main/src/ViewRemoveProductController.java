@@ -1,4 +1,5 @@
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -33,34 +34,56 @@ public class ViewRemoveProductController implements Initializable {
 
         // set onAction for buttonDelete
         buttonDelete.setOnAction(e -> {
-            // get the id for the selected product and remove it from the database
+            // get the selected Product
             Product product = comboBox.getSelectionModel().getSelectedItem();
 
-            DatabaseHelper dbHelper = new DatabaseHelper();
-            if(dbHelper.removeProductById(product.getProductId())) {
-                // the product was removed from the database, update removedProduct to reflect this so that
-                // BeerBaronController knows to refresh the ListView once this stage is closed
-                removedProduct = true;
+            ProgressBox progBox = new ProgressBox();
+            progBox.display("Removing " + product.getProductName() + "...");
 
-                // clear the selection from comboBox
-                comboBox.getSelectionModel().clearSelection();
+            // run database operations on another Thread
+            Task<Boolean> removeTask = new Task<Boolean>() {
+                @Override
+                protected Boolean call() throws Exception {
+                    if(new DatabaseHelper().removeProductById(product.getProductId())) {
+                        // the Product was removed from the database, update removedProduct to reflect this so that
+                        // BeerBaronController knows to refresh the ListView once this stage is closed
+                        removedProduct = true;
+                        return true;
+                    } else {
+                        // there was an error removing the Product from the database
+                        return false;
+                    }
+                }
+            };
 
-                // remove the product from products so it can't be selected again
-                products.remove(product);
-                comboBox.setItems(FXCollections.observableArrayList(products));
+            removeTask.setOnSucceeded(t -> {
+                // hide the ProgressBox now the Task has succeeded
+                progBox.dismiss();
 
-                // display a message to the user informing them that the product has been deleted
-                labelMessage.setText("Removed " + product.getProductName() + " from the database.");
-                labelMessage.getStyleClass().clear();
-                labelMessage.getStyleClass().add("label-success");
-                labelMessage.setVisible(true);
-            } else {
-                // there was an error removing the selected product from the database, display a message to the user
-                labelMessage.setText("There was an error removing " + product.getProductName() + " from the database. Try again.");
-                labelMessage.getStyleClass().clear();
-                labelMessage.getStyleClass().add("label-error");
-                labelMessage.setVisible(true);
-            }
+                if(removeTask.getValue()) {
+                    // clear the selection from comboBox
+                    comboBox.getSelectionModel().clearSelection();
+
+                    // remove the product from products so it can't be selected again
+                    products.remove(product);
+                    comboBox.setItems(FXCollections.observableArrayList(products));
+
+                    // display a message to the user informing them that the product has been deleted
+                    labelMessage.setText("Removed " + product.getProductName() + " from the database.");
+                    labelMessage.getStyleClass().clear();
+                    labelMessage.getStyleClass().add("label-success");
+                    labelMessage.setVisible(true);
+                } else {
+                    // there was an error removing the selected product from the database, display a message to the user
+                    labelMessage.setText("There was an error removing " + product.getProductName() + " from the database. Try again.");
+                    labelMessage.getStyleClass().clear();
+                    labelMessage.getStyleClass().add("label-error");
+                    labelMessage.setVisible(true);
+                }
+            });
+
+            // run the Task
+            new Thread(removeTask).start();
         });
     }
 
