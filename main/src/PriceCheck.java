@@ -1,12 +1,12 @@
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
 
 public class PriceCheck {
     private String productId;
-    private Date priceCheckDateTime;
+    private LocalDate priceCheckDateTime;
     private BigDecimal priceCheckPrice;
 
-    public PriceCheck(String productId, Date priceCheckDateTime, BigDecimal priceCheckPrice) {
+    public PriceCheck(String productId, LocalDate priceCheckDateTime, BigDecimal priceCheckPrice) {
         this.productId = productId;
         this.priceCheckDateTime = priceCheckDateTime;
         this.priceCheckPrice = priceCheckPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -16,7 +16,7 @@ public class PriceCheck {
         return productId;
     }
 
-    public Date getPriceCheckDateTime() {
+    public LocalDate getPriceCheckDateTime() {
         return priceCheckDateTime;
     }
 

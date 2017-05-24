@@ -4,13 +4,21 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
+
 public class BeerBaron extends Application {
     private static final String PROGRAM_TITLE = "Beer Baron";
     private static final String PROGRAM_VERSION = "0.3";
 
     @Override
     public void init() throws Exception {
-         new DatabaseHelper().setUpDatabase();
+         DatabaseHelper dbHelper = new DatabaseHelper();
+         dbHelper.setUpDatabase();
+
+         // update the prices on launch if they haven't been updated today
+         if(dbHelper.getLatestPriceCheckDate().isBefore(LocalDate.now())) {
+             dbHelper.addPriceChecks();
+         }
     }
 
     @Override

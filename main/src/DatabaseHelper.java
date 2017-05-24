@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 public class DatabaseHelper {
@@ -210,8 +213,7 @@ public class DatabaseHelper {
             // objects and add them to the list to return
             while(rs.next()) {
                 // convert the unix timestamp to a readable date
-                Long epoch = rs.getLong(PRICECHECK_COLUMN_DATETIME);
-                Date date = new Date(epoch * 1000);
+                LocalDate date = Instant.ofEpochSecond(rs.getLong(PRICECHECK_COLUMN_DATETIME)).atZone(ZoneId.systemDefault()).toLocalDate();
 
                 BigDecimal priceCheckPrice = rs.getBigDecimal(PRICECHECK_COLUMN_PRICE);
 
@@ -253,6 +255,24 @@ public class DatabaseHelper {
         }
 
         return products;
+    }
+
+    // returns the date of the most recent record in the PriceCheck table
+    public LocalDate getLatestPriceCheckDate() {
+        LocalDate date = LocalDate.MIN;
+
+        try(Connection connection = this.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT MAX(" + PRICECHECK_COLUMN_DATETIME + ") FROM " + TABLE_PRICECHECK + ";")) {
+
+            // the query returned a result, return a Date object using the data from the ResultSet
+            date = Instant.ofEpochSecond(rs.getLong(1)).atZone(ZoneId.systemDefault()).toLocalDate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return date;
     }
 
     // returns an sql query String to perform an insert on the PriceCheck table for the given data
