@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -11,13 +12,16 @@ import java.util.*;
 
 public class BeerBaronController implements Initializable {
     @FXML private MenuBar menuBar;
-    @FXML private MenuItem menuItemCheckPrices;
     @FXML private MenuItem menuItemAddNewProduct;
     @FXML private MenuItem menuItemRemoveProduct;
+    @FXML private MenuItem menuItemCheckPrices;
+    @FXML private MenuItem menuItemExit;
 
     @FXML private TextField tfSearchProducts;
 
     @FXML private ListView<Product> listView;
+
+    @FXML private Label labelLastUpdated;
 
     private ArrayList<Product> products;
     private ArrayList<Product> searchResults;
@@ -33,6 +37,20 @@ public class BeerBaronController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // set the on action methods for the menu items
+        menuItemAddNewProduct.setOnAction(e -> {
+            if(new ViewAddNewProduct().display()) {
+                // if this returned true then at least one product was added, so refresh the ListView
+                updateListView();
+            }
+        });
+
+        menuItemRemoveProduct.setOnAction(e -> {
+            if (new ViewRemoveProduct(products).display()) {
+                // if this returned true than at least one product was removed, so refresh the ListView
+                updateListView();
+            }
+        });
+
         menuItemCheckPrices.setOnAction(e -> {
             ProgressBox progBox = new ProgressBox();
 
@@ -60,19 +78,7 @@ public class BeerBaronController implements Initializable {
             new Thread(task).start();
         });
 
-        menuItemAddNewProduct.setOnAction(e -> {
-            if(new ViewAddNewProduct().display()) {
-                // if this returned true then at least one product was added, so refresh the ListView
-                updateListView();
-            }
-        });
-
-        menuItemRemoveProduct.setOnAction(e -> {
-            if (new ViewRemoveProduct(products).display()) {
-                // if this returned true than at least one product was removed, so refresh the ListView
-                updateListView();
-            }
-        });
+        menuItemExit.setOnAction(e -> Platform.exit());
 
         // add a listener for change in content on tfSearchProducts
         tfSearchProducts.textProperty().addListener(((observable, oldValue, newValue) -> {
@@ -103,6 +109,9 @@ public class BeerBaronController implements Initializable {
 
         // populate listView with the list of products
         listView.setItems(FXCollections.observableArrayList(products));
+
+        // set Label text to display the date of the last price check
+        labelLastUpdated.setText("Prices last updated " + dbHelper.getLatestPriceCheckDate().toString());
     }
 
     // updates the list of products from the database and binds it to the ListView
