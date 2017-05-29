@@ -1,0 +1,17 @@
+.button {
+    -fx-label-padding: 2px 7px 2px 7px;
+}
+
+.hbox {
+    -fx-spacing: 15px;
+}
+
+.label {
+    -fx-label-padding: 0px 0px 10px 0px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
+
+.vbox {
+    -fx-spacing: 10px;
+}

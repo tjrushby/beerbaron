@@ -4,11 +4,12 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import org.omg.PortableInterceptor.SUCCESSFUL;
+import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class BeerBaronController implements Initializable {
     @FXML private MenuBar menuBar;
@@ -27,15 +28,29 @@ public class BeerBaronController implements Initializable {
     private ArrayList<Product> searchResults;
 
     private DatabaseHelper dbHelper;
+    private LocalDate latestPriceCheckDate;
 
-    public BeerBaronController() {
+    private Stage stage;
+
+    public BeerBaronController(Stage stage) {
+        this.stage = stage;
+
         dbHelper = new DatabaseHelper();
         products = dbHelper.getAllProducts();
         searchResults = new ArrayList<>();
+        latestPriceCheckDate = dbHelper.getLatestPriceCheckDate();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // setOnCloseRequest for stage to use ConfirmBox
+        stage.setOnCloseRequest(e -> {
+            if(!new ConfirmBox().display("Exit?", "Are you sure you want to exit?")) {
+                // consume the close request
+                e.consume();
+            }
+        });
+
         // set the on action methods for the menu items
         menuItemAddNewProduct.setOnAction(e -> {
             if(new ViewAddNewProduct().display()) {
@@ -52,33 +67,41 @@ public class BeerBaronController implements Initializable {
         });
 
         menuItemCheckPrices.setOnAction(e -> {
-            ProgressBox progBox = new ProgressBox();
+            if (new ConfirmBox().display(
+                    menuItemCheckPrices.getText() + "?",
+                    "Are you sure? The prices were last checked on " + latestPriceCheckDate)) {
+                ProgressBox progBox = new ProgressBox();
 
-            // display a progress box whilst a price check is performed
-            progBox.display("Fetching Prices");
+                // display a progress box whilst a price check is performed
+                progBox.display("Fetching Prices");
 
-            Task<Void> task = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    // perform a price check
-                    dbHelper.addPriceChecks();
-                    return null;
-                }
+                Task<Void> task = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        // perform a price check
+                        dbHelper.addPriceChecks();
+                        return null;
+                    }
 
-                @Override
-                protected void succeeded() {
-                    // hide the progress box now that call() is finished
-                    progBox.dismiss();
+                    @Override
+                    protected void succeeded() {
+                        // hide the progress box now that call() is finished
+                        progBox.dismiss();
 
-                    // update listView with the new prices from the price check
-                    updateListView();
-                }
-            };
+                        // update listView with the new prices from the price check
+                        updateListView();
+                    }
+                };
 
-            new Thread(task).start();
+                new Thread(task).start();
+            }
         });
 
-        menuItemExit.setOnAction(e -> Platform.exit());
+        menuItemExit.setOnAction(e -> {
+            if (new ConfirmBox().display(menuItemExit.getText() + "?", "Are you sure you want to exit?")) {
+                Platform.exit();
+            }
+        });
 
         // add a listener for change in content on tfSearchProducts
         tfSearchProducts.textProperty().addListener(((observable, oldValue, newValue) -> {
@@ -111,7 +134,7 @@ public class BeerBaronController implements Initializable {
         listView.setItems(FXCollections.observableArrayList(products));
 
         // set Label text to display the date of the last price check
-        labelLastUpdated.setText("Prices last updated " + dbHelper.getLatestPriceCheckDate().toString());
+        labelLastUpdated.setText("Prices last updated " + latestPriceCheckDate);
     }
 
     // updates the list of products from the database and binds it to the ListView
