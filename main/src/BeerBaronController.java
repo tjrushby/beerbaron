@@ -73,7 +73,7 @@ public class BeerBaronController implements Initializable {
                 ProgressBox progBox = new ProgressBox();
 
                 // display a progress box whilst a price check is performed
-                progBox.display("Fetching Prices");
+                progBox.display("Checking Prices", "Updating Prices...");
 
                 Task<Void> task = new Task<Void>() {
                     @Override

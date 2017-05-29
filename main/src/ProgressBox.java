@@ -1,5 +1,4 @@
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -10,7 +9,7 @@ public class ProgressBox {
     private Stage progressBoxStage;
 
     // displays the the progress box
-    public void display(String title) {
+    public void display(String title, String message) {
         progressBoxStage = new Stage();
         progressBoxStage.setResizable(false);
         progressBoxStage.setTitle(title);
@@ -19,8 +18,23 @@ public class ProgressBox {
         progressBoxStage.initModality(Modality.APPLICATION_MODAL);
 
         try {
-            Parent root = new FXMLLoader(getClass().getResource("ProgressBox.fxml")).load();
-            progressBoxStage.setScene(new Scene(root, 320, 100));
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("ProgressBox.fxml"));
+
+            // setControllerFactory so that ProgressBoxController is instantiated with message
+            fxmlLoader.setControllerFactory(controllerClass -> {
+                if(controllerClass == ProgressBoxController.class) {
+                    return new ProgressBoxController(message);
+                } else {
+                    try {
+                        return controllerClass.newInstance();
+                    } catch(Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+
+            progressBoxStage.setScene(new Scene(fxmlLoader.load(), 320, 100));
             progressBoxStage.show();
         } catch (IOException e) {
             e.printStackTrace();

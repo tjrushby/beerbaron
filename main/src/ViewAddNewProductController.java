@@ -64,7 +64,7 @@ public class ViewAddNewProductController implements Initializable {
         gridPane.setVisible(false);
 
         // display a ProgressBox to the user whilst database operations are performed
-        progBox.display("Adding Product");
+        progBox.display("Adding Product", "Adding " + productName + " to database...");
 
         // run database operations on another Thread
         Task<Boolean> addTask = new Task<Boolean>() {
@@ -115,7 +115,7 @@ public class ViewAddNewProductController implements Initializable {
         productId = tfProductId.getText();
 
         // display a ProgressBox to the user whilst parsing operations are performed
-        progBox.display("Searching for " + productId);
+        progBox.display("Searching Products", "Searching for " + productId + "...");
 
         // run parsing operations on another Thread
         Task<Boolean> searchTask = new Task<Boolean>() {

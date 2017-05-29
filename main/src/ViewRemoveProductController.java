@@ -41,7 +41,7 @@ public class ViewRemoveProductController implements Initializable {
                     "Remove Product?",
                     "Are you sure you want to remove " + product.getProductName() + "?\nThis action cannot be undone.")) {
                 ProgressBox progBox = new ProgressBox();
-                progBox.display("Removing " + product.getProductName() + "...");
+                progBox.display("Removing Product", "Removing " + product.getProductName() + " from database...");
 
                 // run database operations on another Thread
                 Task<Boolean> removeTask = new Task<Boolean>() {
