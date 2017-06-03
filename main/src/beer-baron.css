@@ -1,0 +1,48 @@
+.vbox {
+    -fx-font-size: 14px;
+}
+
+.button-graph {
+    -fx-graphic: url("res/icon-graph.png");
+}
+
+.button-web {
+    -fx-graphic: url("res/icon-web.png");
+}
+
+.hyperlink {
+    -fx-border-color: transparent;
+}
+
+.label-above-average {
+    -fx-font-weight: bold;
+    -fx-text-fill: #A4036F;
+}
+
+.label-below-average {
+    -fx-font-weight: bold;
+    -fx-text-fill: #16DB93;
+}
+
+.menu .label {
+    -fx-font-size: 12px;
+}
+
+.list-cell:filled:selected .hyperlink {
+    -fx-underline: true;
+    -fx-font-weight: bold;
+}
+
+.list-view {
+    -fx-background-insets: 0;
+}
+
+.product-list-cell {
+    -fx-insets: 5px;
+}
+
+.status-bar {
+    -fx-border-color: #C8C8C8;
+    -fx-border-style: solid hidden hidden hidden;
+    -fx-border-width: 2px;
+}

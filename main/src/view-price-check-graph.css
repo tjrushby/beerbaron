@@ -2,6 +2,32 @@
     -fx-padding: 10px;
 }
 
-.button-back {
-    -fx-graphic: url("res/icon-back.png");
+.axis-label {
+    -fx-font-weight: bold;
+}
+
+.button {
+    -fx-font-size: 16px;
+}
+
+.chart-line-symbol-hover-node {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 5px;
+    -fx-border-color: #F29E4C;
+    -fx-border-radius: 5px;
+    -fx-border-width: 2px;
+    -fx-alignment: center;
+}
+
+.chart-title {
+    -fx-font-size: 20px;
+    -fx-text-alignment: center;
+}
+
+.default-color0.chart-series-line {
+    -fx-stroke: #F29E4C;
+}
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: #F29E4C, #FFFFFF;
 }

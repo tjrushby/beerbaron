@@ -32,7 +32,7 @@ public class ViewPriceCheckGraphController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // set the chart title and label the axis
-        lineChart.setTitle(product.getProductName() + " Prices Over Time");
+        lineChart.setTitle("Prices Over Time\n" + product.getProductName());
         lineChart.getXAxis().setLabel("Date");
         lineChart.getYAxis().setLabel("Price ($)");
 
@@ -88,7 +88,7 @@ public class ViewPriceCheckGraphController implements Initializable {
             // top of the LineChart
             labelPriceCheckPrice.setTranslateY(20);
 
-            labelPriceCheckPrice.getStyleClass().add("chart-line-symbol");
+            labelPriceCheckPrice.getStyleClass().add("chart-line-symbol-hover-node");
 
             // display the node data when the cursor enters the node
             setOnMouseEntered(e -> {

@@ -2,6 +2,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
@@ -14,8 +15,8 @@ import java.net.URI;
 
 public class ProductListCell extends ListCell<Product> {
     @FXML private HBox hbox;
-    @FXML private Button buttonWeb;
-    @FXML private Button buttonGraph;
+    @FXML private Hyperlink linkWeb;
+    @FXML private Hyperlink linkGraph;
     @FXML private Label labelProductName;
     @FXML private Label labelProductCurrentPrice;
     @FXML private Label labelProductAvgPrice;
@@ -46,9 +47,6 @@ public class ProductListCell extends ListCell<Product> {
                 }
             }
 
-            // add a css style class to the hbox containing everything
-            hbox.getStyleClass().add("hbox");
-
             // set the text of the Label objects to the data we want to represent
             labelProductName.setText(product.getProductName());
 
@@ -74,23 +72,19 @@ public class ProductListCell extends ListCell<Product> {
                 labelProductCurrentPrice.getStyleClass().add("label-above-average");
             }
 
-            // styling for buttonWeb
-            buttonWeb.getStyleClass().addAll("button-icon", "button-web");
-
             // open the product's url in the desktop browser
-            buttonWeb.setOnAction(e -> {
+            linkWeb.setOnAction(e -> {
                 try{
                     Desktop.getDesktop().browse(new URI("https://www.danmurphys.com.au/product/" + product.getProductId()));
                 } catch(Exception ex) {
                     ex.printStackTrace();
                 }
+
+                linkWeb.setVisited(false);
             });
 
-            // styling for buttonGraph
-            buttonGraph.getStyleClass().addAll("button-icon", "button-graph");
-
             // change the scene to view the graph of PriceCheck data for this product
-            buttonGraph.setOnAction(e -> {
+            linkGraph.setOnAction(e -> {
                 Scene thisScene = this.getScene();
                 Stage thisStage = (Stage) thisScene.getWindow();
 
@@ -118,6 +112,8 @@ public class ProductListCell extends ListCell<Product> {
                 } catch(IOException ex) {
                     ex.printStackTrace();
                 }
+
+                linkGraph.setVisited(false);
             });
 
             // draw the HBox containing our FXML objects in this cell
