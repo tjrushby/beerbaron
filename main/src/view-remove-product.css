@@ -1,13 +1,4 @@
-.label-error {
-   visibility: visible;
-   -fx-text-fill: red;
-}
-
-.label-success {
-   visibility: visible;
-   -fx-text-fill: green;
-}
-
-.label-hidden {
-   visibility: hidden;
+.vbox {
+    -fx-insets: 10px;
+    -fx-spacing: 20px;
 }

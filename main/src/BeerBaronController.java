@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class BeerBaronController implements Initializable {
+    @FXML private VBox vbox;
+
     @FXML private MenuBar menuBar;
     @FXML private MenuItem menuItemAddNewProduct;
     @FXML private MenuItem menuItemRemoveProduct;
@@ -23,6 +26,8 @@ public class BeerBaronController implements Initializable {
     @FXML private ListView<Product> listView;
 
     @FXML private Label labelLastUpdated;
+
+    private boolean focusedOnLoad;
 
     private ArrayList<Product> products;
     private ArrayList<Product> searchResults;
@@ -43,6 +48,9 @@ public class BeerBaronController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // variable for removing the focus from tfSearchProducts when the Scene is loaded
+        focusedOnLoad = true;
+
         // setOnCloseRequest for stage to use ConfirmBox
         stage.setOnCloseRequest(e -> {
             if(!new ConfirmBox().display("Exit?", "Are you sure you want to exit?")) {
@@ -102,6 +110,14 @@ public class BeerBaronController implements Initializable {
                 Platform.exit();
             }
         });
+
+        // add a listener to remove focus from tfSearchProducts when the Scene is loaded
+        tfSearchProducts.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+            if(focusedOnLoad) {
+                vbox.requestFocus();
+                focusedOnLoad = false;
+            }
+        }));
 
         // add a listener for change in content on tfSearchProducts
         tfSearchProducts.textProperty().addListener(((observable, oldValue, newValue) -> {

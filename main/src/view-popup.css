@@ -1,0 +1,17 @@
+.label {
+    -fx-wrap-text: true;
+}
+
+.label-error {
+   visibility: visible;
+   -fx-text-fill: #A4036F;
+}
+
+.label-success {
+   visibility: visible;
+   -fx-text-fill: #16DB93;
+}
+
+.label-hidden {
+   visibility: hidden;
+}
