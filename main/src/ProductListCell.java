@@ -1,10 +1,10 @@
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -17,11 +17,17 @@ public class ProductListCell extends ListCell<Product> {
     @FXML private HBox hbox;
     @FXML private Hyperlink linkWeb;
     @FXML private Hyperlink linkGraph;
+    @FXML private Hyperlink linkRemove;
     @FXML private Label labelProductName;
     @FXML private Label labelProductCurrentPrice;
     @FXML private Label labelProductAvgPrice;
 
+    private ListView listView;
     private FXMLLoader fxmlLoader;
+
+    public ProductListCell(ListView listView) {
+        this.listView = listView;
+    }
 
     @Override
     protected void updateItem(Product product, boolean empty) {
@@ -115,6 +121,54 @@ public class ProductListCell extends ListCell<Product> {
 
                 linkGraph.setVisited(false);
             });
+
+            linkRemove.setOnAction(e -> {
+                if (new ConfirmBox().display(
+                        "Remove Product?",
+                        "Are you sure you want to remove " + product.getProductName() + "?\nThis action cannot be undone.")) {
+                    // display ProgressBox to the user whilst database operations are performed
+                    ProgressBox progBox = new ProgressBox();
+                    progBox.display("Removing Product", "Removing " + product.getProductName() + " from database...");
+
+                    // run database operations on another Thread
+                    Task<Boolean> removeTask = new Task<Boolean>() {
+                        @Override
+                        protected Boolean call() throws Exception {
+                            if (new DatabaseHelper().removeProductById(product.getProductId())) {
+                                // the Product was successfully removed from the database
+                                return true;
+                            } else {
+                                // there was an error removing the Product from the database
+                                return false;
+                            }
+                        }
+                    };
+
+                    removeTask.setOnSucceeded(t -> {
+                        // hide the ProgressBox now the Task has finished running
+                        progBox.dismiss();
+
+                        if (removeTask.getValue()) {
+                            // remove the product from listView because it was successfully removed from the
+                            // database and clear the selection on the listView
+                            listView.getItems().remove(this.getIndex());
+                            listView.getSelectionModel().clearSelection();
+                        } else {
+                            new DialogueBox().display(
+                                    "Error",
+                                    "There was an error removing " + product.getProductName() + " from the database"
+                            );
+                        }
+                    });
+
+                    // run the Task
+                    new Thread(removeTask).start();
+                }
+
+                // set Hyperlink.visited to false for this ProductListCell
+                linkRemove.setVisited(false);
+            });
+
 
             // draw the HBox containing our FXML objects in this cell
             setGraphic(hbox);

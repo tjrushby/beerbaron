@@ -17,6 +17,7 @@
                      <children>
                         <Hyperlink fx:id="linkWeb" text="View On the Web" />
                         <Hyperlink fx:id="linkGraph" text="View Price History" />
+                        <Hyperlink fx:id="linkRemove" layoutX="103.0" layoutY="10.0" text="Remove Product" />
                      </children>
                      <VBox.margin>
                         <Insets left="-4.0" />

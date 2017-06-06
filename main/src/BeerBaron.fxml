@@ -16,7 +16,6 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem fx:id="menuItemAddNewProduct" mnemonicParsing="false" text="Add New Product..." />
-                  <MenuItem fx:id="menuItemRemoveProduct" mnemonicParsing="false" text="Remove Product..." />
                   <MenuItem fx:id="menuItemCheckPrices" mnemonicParsing="false" text="Check Prices" />
               <MenuItem fx:id="menuItemExit" mnemonicParsing="false" text="Exit" />
             </items>

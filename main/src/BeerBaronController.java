@@ -17,7 +17,6 @@ public class BeerBaronController implements Initializable {
 
     @FXML private MenuBar menuBar;
     @FXML private MenuItem menuItemAddNewProduct;
-    @FXML private MenuItem menuItemRemoveProduct;
     @FXML private MenuItem menuItemCheckPrices;
     @FXML private MenuItem menuItemExit;
 
@@ -63,13 +62,6 @@ public class BeerBaronController implements Initializable {
         menuItemAddNewProduct.setOnAction(e -> {
             if(new ViewAddNewProduct().display()) {
                 // if this returned true then at least one product was added, so refresh the ListView
-                updateListView();
-            }
-        });
-
-        menuItemRemoveProduct.setOnAction(e -> {
-            if (new ViewRemoveProduct(products).display()) {
-                // if this returned true than at least one product was removed, so refresh the ListView
                 updateListView();
             }
         });
@@ -144,7 +136,7 @@ public class BeerBaronController implements Initializable {
         }));
 
         // tell the CellFactory to use ProductListCell instead of the default
-        listView.setCellFactory(productListView -> new ProductListCell());
+        listView.setCellFactory(productListView -> new ProductListCell(listView));
 
         // populate listView with the list of products
         listView.setItems(FXCollections.observableArrayList(products));
