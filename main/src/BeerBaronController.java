@@ -60,7 +60,7 @@ public class BeerBaronController implements Initializable {
 
         // set the on action methods for the menu items
         menuItemAddNewProduct.setOnAction(e -> {
-            if(new ViewAddNewProduct().display()) {
+            if(new ViewAddNewProduct().display(products)) {
                 // if this returned true then at least one product was added, so refresh the ListView
                 updateListView();
             }

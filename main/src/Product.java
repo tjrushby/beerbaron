@@ -39,4 +39,15 @@ public class Product {
                "productCurrentPrice: " + productCurrentPrice + "\n" +
                "productAvgPrice: " + productAvgPrice;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o != null && o instanceof Product) {
+            if(((Product) o).productId.equals(this.productId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

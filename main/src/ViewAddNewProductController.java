@@ -1,85 +1,95 @@
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import org.jsoup.nodes.Document;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ViewAddNewProductController implements Initializable {
-    @FXML private Button buttonSearchProduct;
-    @FXML private Button buttonAddProduct;
-
-    @FXML private GridPane gridPane;
-
+    @FXML private Button buttonSearch;
+    @FXML private Button buttonAdd;
     @FXML private Label labelMessage;
-    @FXML private Label labelProductId;
-    @FXML private Label labelProductName;
-    @FXML private Label labelProductCurPrice;
-
-    @FXML private TextField tfProductId;
+    @FXML private ListView<Product> listView;
+    @FXML private TextField tfSearch;
 
     private boolean addedProduct;
 
-    private ProductParser parser;
+    private List<Product> existingProducts;
     private ProgressBox progBox;
 
-    private String productId;
-    private String productName;
-    private String productCurPrice;
+    public ViewAddNewProductController(List<Product> existingProducts) {
+        this.existingProducts = existingProducts;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        parser = new ProductParser();
         progBox = new ProgressBox();
 
-        // we haven't added a new product because the window just opened
-        addedProduct = false;
+        // bind the disableProperty for the Button objects to their respective conditions
+        buttonAdd.disableProperty().bind(Bindings.isEmpty(listView.getSelectionModel().getSelectedItems()));
+        buttonSearch.disableProperty().bind(Bindings.isEmpty(tfSearch.textProperty()));
+
+        // fire buttonSearch using the ENTER key in tfSearch
+        tfSearch.setOnKeyPressed(keyInput -> {
+            if(keyInput.getCode().equals(KeyCode.ENTER)) {
+                buttonSearch.fire();
+            }
+        });
 
         // set on action methods for the buttons
-        buttonSearchProduct.setOnAction(e -> buttonSearchProductClicked());
-        buttonAddProduct.setOnAction(e -> buttonAddProductClicked());
+        buttonSearch.setOnAction(e -> searchProducts());
+        buttonAdd.setOnAction(e -> addProducts());
 
-        // disable buttonSearchProduct if tfProductId is empty
-        buttonSearchProduct.setDisable(true);
+        // set the CellFactory for listView
+        listView.setCellFactory(searchListView -> new SearchListCell());
 
-        tfProductId.textProperty().addListener(((observable, oldValue, newValue) -> {
-            if(observable.getValue().equals("")) {
-                buttonSearchProduct.setDisable(true);
-            } else {
-                buttonSearchProduct.setDisable(false);
-            }
-        }));
+        // allow the user to select multiple products in listView
+        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    // adds a new row to the Product table and PriceCheck table for the parsed product
-    private void buttonAddProductClicked() {
+    // adds a new row to the Product table and the PriceCheck table for the parsed product
+    private void addProducts() {
         DatabaseHelper dbHelper = new DatabaseHelper();
+        List<Product> addedProductsList = new ArrayList<>();
 
-        // hide the product details
-        gridPane.setVisible(false);
-
-        // display a ProgressBox to the user whilst database operations are performed
-        progBox.display("Adding Product", "Adding " + productName + " to database...");
-
-        // run database operations on another Thread
+        // set up a Task to run database operations
         Task<Boolean> addTask = new Task<Boolean>() {
            @Override
            protected Boolean call() throws Exception {
-                // add the product to the Product table and add a row to the PriceCheck table for this product
-                if (dbHelper.addProduct(productId, productName) &&
-                    dbHelper.addPriceCheck(productId, productCurPrice)) {
+               boolean addedProductToDatabase, addedPriceCheck, error = false;
 
-                    addedProduct = true;
-                    return true;
-                } else {
-                    // there was an error adding the product to the database
-                    return false;
-                }
+               // add the product to the Product table and add a row to the PriceCheck table for this product
+               for(Product p : listView.getSelectionModel().getSelectedItems()) {
+                   addedProductToDatabase = dbHelper.addProduct(p.getProductId(), p.getProductName());
+                   addedPriceCheck = dbHelper.addPriceCheck(p.getProductId(), p.getProductCurrentPrice().toString());
+
+                   if(addedProductToDatabase && addedPriceCheck) {
+                       if (addedProduct != true) {
+                           // added a product to the database
+                           addedProduct = true;
+                       }
+
+                       // add p to addedProductsList so it can be removed from listView once addTask has completed
+                       addedProductsList.add(p);
+                   } else {
+                       // there was an error adding this product to the database
+                       error = true;
+                   }
+               }
+
+               if(!error) {
+                   // successfully added all selected product(s) to the database, return true
+                   return true;
+               } else {
+                   // there was an error adding one or more of the selected product(s) to the database, return false
+                   return false;
+               }
            }
         };
 
@@ -89,86 +99,88 @@ public class ViewAddNewProductController implements Initializable {
 
             if (addTask.getValue()) {
                 // display a success message to the user
-                labelMessage.setText("Successfully added " + productName);
                 labelMessage.getStyleClass().clear();
                 labelMessage.getStyleClass().add("label-success");
+                labelMessage.setText("Successfully added product(s) to the database.");
 
-                // clear tfProductId so the user doesn't need to if they want to add another product
-                tfProductId.clear();
+                // clear tfSearch so the user doesn't need to if they want to search for another term
+                tfSearch.clear();
+
+                // remove the added product(s) from listView, clear selections
+                listView.getItems().removeAll(addedProductsList);
+                listView.getSelectionModel().clearSelection();
             } else {
                 // display an error message to the user
-                labelMessage.setText("There was an error adding " + productName);
                 labelMessage.getStyleClass().clear();
                 labelMessage.getStyleClass().add("label-error");
-
-                // disable buttonAddProduct so the user can't repeatedly try and add the product
-                buttonAddProduct.setDisable(true);
+                labelMessage.setText("There was an error adding one or more products to the database.");
             }
         });
 
-        // run the Task
+        // display a ProgressBox to the user whilst database operations are performed
+        progBox.display("Adding Product", "Adding product(s) to the database...");
+
+        // run database operations on another Thread
         new Thread(addTask).start();
     }
 
-    // searches for the entered product id and parses data for it if found
-    private void buttonSearchProductClicked() {
-        productId = tfProductId.getText();
+    // searches for the text in tfSearch and parses data for it if found
+    private void searchProducts() {
+        String searchTerm = tfSearch.getText();
 
-        // display a ProgressBox to the user whilst parsing operations are performed
-        progBox.display("Searching Products", "Searching for " + productId + "...");
-
-        // run parsing operations on another Thread
-        Task<Boolean> searchTask = new Task<Boolean>() {
+        // set up a Task to perform parsing operations
+        Task<List<Product>> searchTask = new Task<List<Product>>() {
             @Override
-            protected Boolean call() throws Exception {
-                Document doc = parser.parseProductPage(productId);
-                productName = parser.parseProductName(doc);
-
-                if(!productName.equals("")) {
-                    // found a product for productId, parse the price
-                    productCurPrice = parser.parseProductPrice(doc);
-                    return true;
-                } else {
-                    // there is no product for productId
-                    return false;
-                }
+            protected List<Product> call() throws Exception {
+                // search for the contents of tfSearch
+                return new SearchParser().parseSearchPage(searchTerm);
             }
         };
 
         searchTask.setOnSucceeded(e -> {
-            // hide the ProgressBox now the Task has succeeded
-            progBox.dismiss();
+            tfSearch.selectAll();
 
-            if(searchTask.getValue()) {
-                // hide the error label in case it was displayed previously
+            List<Product> results = searchTask.getValue();
+            List<Product> resultsToRemove = new ArrayList<>();
+
+            for(Product p : results) {
+                if(existingProducts.contains(p)) {
+                    resultsToRemove.add(p);
+                }
+            }
+
+            results.removeAll(resultsToRemove);
+
+            if(!results.isEmpty()) {
+                // found results that are not in the local database, bind the listView to the new List<Product>
+                listView.setItems(FXCollections.observableArrayList(results));
+
+                // scroll to the top of listView
+                listView.scrollTo(0);
+
+                labelMessage.setText("Results found for '" + tfSearch.getText() + "'. " +
+                                     "\nProducts already in the database are not displayed");
                 labelMessage.getStyleClass().clear();
-                labelMessage.getStyleClass().add("label-hidden");
-
-                // display the product data to the user
-                labelProductId.setText(productId);
-                labelProductName.setText(productName);
-                labelProductCurPrice.setText(productCurPrice);
-
-                // display the GridPane where we will show parsed product data
-                gridPane.setVisible(true);
-
-                // enable buttonAddProduct so the user can add this product to the database if they wish
-                buttonAddProduct.setDisable(false);
+                labelMessage.getStyleClass().add("label-success");
             } else {
-                // there is no product with the given id, hide the GridPane in case it is displaying any product data
-                gridPane.setVisible(false);
+                // no results were found that are not in the local database, clear listView in case it has previous
+                // results displayed
+                listView.getItems().clear();
 
-                // disable buttonAddProduct because there is no product to add to the database
-                buttonAddProduct.setDisable(true);
-
-                // display an error message to the user
-                labelMessage.setText("Error. No Product found for id " + productId);
+                // display a message to the user
+                labelMessage.setText("No results found for '" + tfSearch.getText() + "' that are not already in the database.");
                 labelMessage.getStyleClass().clear();
                 labelMessage.getStyleClass().add("label-error");
             }
+
+            // hide progBox
+            progBox.dismiss();
         });
 
-        // run the Task
+        // display a ProgressBox to the user whilst parsing operations are performed
+        progBox.display("Searching Products", "Searching for " + searchTerm + "...");
+
+        // run parsing operations on another Thread
         new Thread(searchTask).start();
     }
 
