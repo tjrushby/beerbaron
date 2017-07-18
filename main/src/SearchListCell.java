@@ -34,7 +34,7 @@ public class SearchListCell extends ListCell<Product> {
             // render the FXML layout in this ListCell
             try {
                 setGraphic(fxmlLoader.load());
-            } catch (IOException e) {
+            } catch(IOException e) {
                 e.printStackTrace();
             }
         }

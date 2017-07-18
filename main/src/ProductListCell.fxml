@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox fx:id="hbox" alignment="CENTER_LEFT" styleClass="product-list-cell" stylesheets="@beer-baron.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<HBox fx:id="hbox" alignment="CENTER_LEFT" styleClass="product-list-cell" stylesheets="@beer-baron.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ProductListCellController">
    <children>
       <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
          <children>
