@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox fx:id="hbox" alignment="CENTER_LEFT" styleClass="product-list-cell" stylesheets="@../css/beer-baron.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ProductListCellController">
+   <children>
+      <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+         <children>
+            <VBox alignment="CENTER_LEFT">
+               <children>
+                  <Label fx:id="labelProductName" text="Product Name" />
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Hyperlink fx:id="linkWeb" text="View On the Web" />
+                        <Hyperlink fx:id="linkGraph" text="View Price History" />
+                        <Hyperlink fx:id="linkRemove" layoutX="103.0" layoutY="10.0" text="Remove Product" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="-4.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+         <children>
+            <VBox alignment="CENTER_RIGHT">
+               <children>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Label fx:id="labelProductCurrentPrice" text="CUR_PRICE" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label text="Average " />
+                        <Label fx:id="labelProductAvgPrice" text="AVG_PRICE" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</HBox>

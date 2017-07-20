@@ -9,7 +9,7 @@ public class BeerPreloader extends Preloader {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = new FXMLLoader().load((getClass().getResource("BeerPreloader.fxml")));
+        Parent root = new FXMLLoader().load((getClass().getResource("fxml/BeerPreloader.fxml")));
 
         plStage = primaryStage;
         plStage.setScene(new Scene(root, 480, 360));
