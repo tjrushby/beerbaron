@@ -21,12 +21,15 @@ An application for quickly checking prices of commonly purchased items from a la
 
 
 ![Alt text](http://i.imgur.com/PJOcgdO.png "Products List")
+
 Products List
 
 ![Alt text](http://i.imgur.com/YOmH2Xj.png "Filtering of Products")
+
 Filtering of Products
 
 ![Alt text](http://i.imgur.com/Seuc6zf.png "Price History Graph")
+
 Price History Graph
 
 ![Alt text](http://i.imgur.com/aV9HNwS.png "Add New Products")
