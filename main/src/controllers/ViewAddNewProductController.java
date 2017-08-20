@@ -49,6 +49,10 @@ public class ViewAddNewProductController implements Initializable {
             }
         });
 
+        // bind the managedProperty of labelMessage to the visibleProperty so that the UI doesn't show a blank space
+        // before there is a message to display to the user
+        labelMessage.managedProperty().bind(labelMessage.visibleProperty());
+
         // set on action methods for the buttons
         buttonSearch.setOnAction(e -> searchProducts());
         buttonAdd.setOnAction(e -> addProducts());
@@ -69,30 +73,30 @@ public class ViewAddNewProductController implements Initializable {
         Task<Boolean> addTask = new Task<Boolean>() {
            @Override
            protected Boolean call() throws Exception {
-               boolean addedProductToDatabase, addedPriceCheck, error = false;
+            boolean addedProductToDatabase, addedPriceCheck, error = false;
 
-               // add the product to the Product table and add a row to the PriceCheck table for this product
-               for(Product p : listView.getSelectionModel().getSelectedItems()) {
-                   addedProductToDatabase = dbHelper.addProduct(p.getProductId(), p.getProductName());
-                   addedPriceCheck = dbHelper.addPriceCheck(p.getProductId(), p.getProductCurrentPrice().toString());
+            // add the product to the Product table and add a row to the PriceCheck table for this product
+            for(Product p : listView.getSelectionModel().getSelectedItems()) {
+               addedProductToDatabase = dbHelper.addProduct(p.getProductId(), p.getProductName());
+               addedPriceCheck = dbHelper.addPriceCheck(p.getProductId(), p.getProductCurrentPrice().toString());
 
-                   if(addedProductToDatabase && addedPriceCheck) {
-                       if (addedProduct != true) {
-                           // added a product to the database
-                           addedProduct = true;
-                       }
-
-                       // add p to addedProductsList so it can be removed from listView once addTask has completed
-                       addedProductsList.add(p);
-                   } else {
-                       // there was an error adding this product to the database
-                       error = true;
+               if(addedProductToDatabase && addedPriceCheck) {
+                   if (addedProduct != true) {
+                       // added a product to the database
+                       addedProduct = true;
                    }
-               }
 
-               // successfully added all selected product(s) to the database, return true
-// there was an error adding one or more of the selected product(s) to the database, return false
-               return !error;
+                   // add p to addedProductsList so it can be removed from listView once addTask has completed
+                   addedProductsList.add(p);
+               } else {
+                   // there was an error adding this product to the database
+                   error = true;
+               }
+            }
+
+            // successfully added all selected product(s) to the database, return true
+            // there was an error adding one or more of the selected product(s) to the database, return false
+            return !error;
            }
         };
 
@@ -161,7 +165,7 @@ public class ViewAddNewProductController implements Initializable {
                 // scroll to the top of listView
                 listView.scrollTo(0);
 
-                labelMessage.setText("Results found for '" + tfSearch.getText() + "'. " +
+                labelMessage.setText("Results found for '" + searchTerm + "'. " +
                                      "\nProducts already in the database are not displayed");
                 labelMessage.getStyleClass().clear();
                 labelMessage.getStyleClass().add("label-success");
@@ -171,7 +175,7 @@ public class ViewAddNewProductController implements Initializable {
                 listView.getItems().clear();
 
                 // display a message to the user
-                labelMessage.setText("No results found for '" + tfSearch.getText() + "' that are not already in the database.");
+                labelMessage.setText("No results found for '" + searchTerm + "' that are not already in the database.");
                 labelMessage.getStyleClass().clear();
                 labelMessage.getStyleClass().add("label-error");
             }
