@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 public class BeerBaron extends Application {
     private static final String PROGRAM_TITLE = "Beer Baron";
-    private static final String PROGRAM_VERSION = "0.3";
+    private static final String PROGRAM_VERSION = "1.0";
 
     @Override
     public void init() throws Exception {
