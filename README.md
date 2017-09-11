@@ -2,6 +2,8 @@
 
 An application for quickly checking prices of commonly purchased items from a large liquor retailer.
 
+Implemented using MVC architecture and utilising JavaFX for the GUI, Jsoup for web parsing and SQLite for the database.
+
 # Features:
 
 . Price tracking
