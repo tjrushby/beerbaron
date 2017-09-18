@@ -27,7 +27,7 @@ public class BeerBaron extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("../fxml/BeerBaron.fxml"));
+        fxmlLoader.setLocation(getClass().getResource("/fxml/BeerBaron.fxml"));
 
         // setControllerFactory so we can instantiate the controllers.BeerBaronController with primaryStage
         fxmlLoader.setControllerFactory(controllerClass -> {

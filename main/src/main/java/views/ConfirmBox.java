@@ -22,7 +22,7 @@ public class ConfirmBox {
 
         try {
             fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("../fxml/ConfirmBox.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/ConfirmBox.fxml"));
 
             // setControllerFactory so that controllers.ConfirmBoxController is instantiated with confirmBoxStage and message
             fxmlLoader.setControllerFactory(controllerClass -> {

@@ -20,7 +20,7 @@ public class SearchListCell extends ListCell<Product> {
             setGraphic(null);
         } else {
             fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("../fxml/SearchListCell.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/SearchListCell.fxml"));
 
             // setControllerFactory so we can instantiate controllers.SearchListCellController with product
             fxmlLoader.setControllerFactory(controllerClass -> {

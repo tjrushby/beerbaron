@@ -22,7 +22,7 @@ public class ProgressBox {
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("../fxml/ProgressBox.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/ProgressBox.fxml"));
 
             // setControllerFactory so that controllers.ProgressBoxController is instantiated with message
             fxmlLoader.setControllerFactory(controllerClass -> {

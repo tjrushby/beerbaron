@@ -22,7 +22,7 @@ public class DialogueBox {
 
         try {
             fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("../fxml/DialogueBox.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/DialogueBox.fxml"));
 
             // setControllerFactory so that controllers.DialogueBoxController is instantiated with dialogueBoxStage and message
             fxmlLoader.setControllerFactory(controllerClass -> {

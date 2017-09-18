@@ -89,7 +89,7 @@ public class ProductListCellController implements Initializable {
 
             try {
                 FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("../fxml/ViewPriceCheckGraph.fxml"));
+                loader.setLocation(getClass().getResource("/fxml/ViewPriceCheckGraph.fxml"));
 
                 // setControllerFactory so that we can instantiate controllers.ViewPriceCheckGraphController with what it needs
                 loader.setControllerFactory(controllerClass -> {

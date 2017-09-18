@@ -27,7 +27,7 @@ public class ViewAddNewProduct {
 
         // use a custom constructor for the Controller Class
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/ViewAddNewProduct.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ViewAddNewProduct.fxml"));
 
             fxmlLoader.setControllerFactory(controllerClass -> {
                 if(controllerClass == ViewAddNewProductController.class) {
@@ -57,7 +57,7 @@ public class ViewAddNewProduct {
         }
 
         // at least one product was added, return true to update the ListView in views.BeerBaron
-// no products were added, return false to not update the ListView in views.BeerBaron
+        // no products were added, return false to not update the ListView in views.BeerBaron
         return addedProduct;
     }
 }
